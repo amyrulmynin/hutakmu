@@ -40,6 +40,9 @@ export const api = {
   getDebt: (id: string) => request(`/debts/${id}`),
   createDebt: (body: { borrowerId: string; amount: number; flatFee: number; durationMonths: number; startDate?: string }) =>
     request('/debts', { method: 'POST', body: JSON.stringify(body) }),
+  editDebt: (id: string, body: { amount?: number; flatFee?: number; durationMonths?: number; startDate?: string; status?: string }) =>
+    request(`/debts/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
+  deleteDebt: (id: string) => request(`/debts/${id}`, { method: 'DELETE' }),
   getMyDebts: () => request('/debts/my'),
 
   // Payments

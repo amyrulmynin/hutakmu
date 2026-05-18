@@ -117,4 +117,77 @@ router.get('/:id', (req, res) => {
   });
 });
 
+// Edit debt
+router.put('/:id', (req, res) => {
+  const debts = readJSON('debts.json');
+  const idx = debts.findIndex(d => d.id === req.params.id && d.adminId === req.user.id);
+  if (idx === -1) return res.status(404).json({ error: 'Hutang tidak dijumpai' });
+
+  const { amount, flatFee, durationMonths, startDate, status } = req.body;
+  const debt = debts[idx];
+
+  // Update fields if provided
+  if (amount !== undefined) debt.amount = parseFloat(amount);
+  if (flatFee !== undefined) debt.flatFee = parseFloat(flatFee);
+  if (durationMonths !== undefined) debt.durationMonths = parseInt(durationMonths);
+  if (startDate !== undefined) debt.startDate = startDate;
+  if (status !== undefined) debt.status = status;
+
+  // Recalculate
+  debt.totalAmount = debt.amount + debt.flatFee;
+  debt.monthlyPayment = Math.round((debt.totalAmount / debt.durationMonths) * 100) / 100;
+
+  debts[idx] = debt;
+  writeJSON('debts.json', debts);
+
+  // Regenerate unpaid installments if duration/amount/startDate changed
+  if (amount !== undefined || flatFee !== undefined || durationMonths !== undefined || startDate !== undefined) {
+    let installments = readJSON('installments.json');
+    // Remove only pending installments for this debt
+    const paidInstallments = installments.filter(i => i.debtId === debt.id && i.status === 'paid');
+    installments = installments.filter(i => i.debtId !== debt.id || i.status === 'paid');
+
+    const paidCount = paidInstallments.length;
+    const remainingMonths = debt.durationMonths - paidCount;
+    const start = new Date(debt.startDate);
+
+    for (let i = 0; i < remainingMonths; i++) {
+      const monthIndex = paidCount + i;
+      const dueDate = new Date(start);
+      dueDate.setMonth(dueDate.getMonth() + monthIndex + 1);
+
+      installments.push({
+        id: uuidv4(),
+        debtId: debt.id,
+        month: monthIndex + 1,
+        dueDate: dueDate.toISOString().split('T')[0],
+        amount: debt.monthlyPayment,
+        status: 'pending',
+        paidAt: null
+      });
+    }
+
+    writeJSON('installments.json', installments);
+  }
+
+  res.json(debt);
+});
+
+// Delete debt
+router.delete('/:id', (req, res) => {
+  let debts = readJSON('debts.json');
+  const debt = debts.find(d => d.id === req.params.id && d.adminId === req.user.id);
+  if (!debt) return res.status(404).json({ error: 'Hutang tidak dijumpai' });
+
+  debts = debts.filter(d => d.id !== req.params.id);
+  writeJSON('debts.json', debts);
+
+  // Remove installments
+  let installments = readJSON('installments.json');
+  installments = installments.filter(i => i.debtId !== req.params.id);
+  writeJSON('installments.json', installments);
+
+  res.json({ success: true });
+});
+
 module.exports = router;

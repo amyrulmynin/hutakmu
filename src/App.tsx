@@ -10,6 +10,7 @@ import NewBorrower from "./pages/NewBorrower"
 import Approvals from "./pages/Approvals"
 import Settings from "./pages/Settings"
 import MyDebts from "./pages/MyDebts"
+import PayDebt from "./pages/PayDebt"
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/dashboard/approvals" element={<Approvals />} />
         <Route path="/dashboard/settings" element={<Settings />} />
         <Route path="/my-debts" element={<MyDebts />} />
+        <Route path="/pay/:debtId" element={<PayDebt />} />
       </Routes>
     </BrowserRouter>
   )

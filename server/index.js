@@ -6,6 +6,7 @@ const debtRoutes = require('./routes/debts');
 const borrowerRoutes = require('./routes/borrowers');
 const paymentRoutes = require('./routes/payments');
 const settingsRoutes = require('./routes/settings');
+const publicPayRoutes = require('./routes/public-pay');
 const { authMiddleware } = require('./middleware/auth');
 
 const app = express();
@@ -17,6 +18,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Public routes
 app.use('/api/auth', authRoutes);
+app.use('/api/pay', publicPayRoutes);
 
 // Protected routes
 app.use('/api/debts', authMiddleware, debtRoutes);

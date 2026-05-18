@@ -6,6 +6,7 @@ import { api } from "../lib/api"
 
 export default function Debts() {
   const [debts, setDebts] = useState<any[]>([])
+  const [copied, setCopied] = useState("")
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -13,6 +14,14 @@ export default function Debts() {
     if (!token) { navigate("/login"); return }
     api.getDebts().then(setDebts).catch(() => navigate("/login"))
   }, [navigate])
+
+  const shareLink = (debtId: string) => {
+    const url = `${window.location.origin}/pay/${debtId}`
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(debtId)
+      setTimeout(() => setCopied(""), 2000)
+    })
+  }
 
   return (
     <div className="min-h-screen pb-20">
@@ -41,6 +50,14 @@ export default function Debts() {
               <div className="mt-2 h-1.5 bg-muted rounded-full overflow-hidden">
                 <div className="h-full bg-primary rounded-full" style={{ width: `${(debt.paidCount / debt.durationMonths) * 100}%` }} />
               </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full mt-3"
+                onClick={() => shareLink(debt.id)}
+              >
+                {copied === debt.id ? "✅ Link Copied!" : "📤 Share Link Bayar"}
+              </Button>
             </CardContent>
           </Card>
         ))}

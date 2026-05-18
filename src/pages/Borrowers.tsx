@@ -1,13 +1,18 @@
-import { Link } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { Button } from "../components/ui/button"
 import { Card, CardContent } from "../components/ui/card"
+import { api } from "../lib/api"
 
 export default function Borrowers() {
-  const borrowers = [
-    { id: "1", name: "Ahmad", phone: "0123456789", totalOwed: 650 },
-    { id: "2", name: "Siti", phone: "0198765432", totalOwed: 0 },
-    { id: "3", name: "Ali", phone: "0112233445", totalOwed: 1100 },
-  ]
+  const [borrowers, setBorrowers] = useState<any[]>([])
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (!token) { navigate("/login"); return }
+    api.getBorrowers().then(setBorrowers).catch(() => navigate("/login"))
+  }, [navigate])
 
   return (
     <div className="min-h-screen pb-20">
@@ -17,6 +22,7 @@ export default function Borrowers() {
       </header>
 
       <div className="p-4 space-y-3">
+        {borrowers.length === 0 && <p className="text-center text-sm text-muted-foreground py-8">Tiada peminjam lagi. Klik + Tambah untuk mula.</p>}
         {borrowers.map((b) => (
           <Card key={b.id}>
             <CardContent className="p-4">
@@ -25,13 +31,6 @@ export default function Borrowers() {
                 <div className="flex-1">
                   <p className="font-semibold text-sm">{b.name}</p>
                   <p className="text-xs text-muted-foreground">{b.phone}</p>
-                </div>
-                <div className="text-right">
-                  {b.totalOwed > 0 ? (
-                    <p className="font-bold text-sm">RM {b.totalOwed}</p>
-                  ) : (
-                    <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">Selesai</span>
-                  )}
                 </div>
               </div>
             </CardContent>

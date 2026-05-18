@@ -1,13 +1,30 @@
-import { Link } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { Button } from "../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
+import { api } from "../lib/api"
 
 export default function Dashboard() {
+  const [stats, setStats] = useState({ totalOwed: 0, totalCollected: 0, activeDebts: 0, totalBorrowers: 0, pendingApprovals: 0 })
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (!token) { navigate("/login"); return }
+    api.stats().then(setStats).catch(() => navigate("/login"))
+  }, [navigate])
+
+  const logout = () => {
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+    navigate("/login")
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b px-4 py-3 flex items-center justify-between">
         <h1 className="text-lg font-bold">Hutakmu</h1>
-        <Link to="/login"><Button variant="ghost" size="sm">Logout</Button></Link>
+        <Button variant="ghost" size="sm" onClick={logout}>Logout</Button>
       </header>
 
       <div className="flex-1 pb-16 p-4 space-y-4">
@@ -17,8 +34,8 @@ export default function Dashboard() {
               <CardTitle className="text-xs text-muted-foreground font-normal">Hutang Aktif</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
-              <p className="text-2xl font-bold">RM 2,450</p>
-              <p className="text-xs text-muted-foreground">5 peminjam</p>
+              <p className="text-2xl font-bold">RM {stats.totalOwed.toFixed(2)}</p>
+              <p className="text-xs text-muted-foreground">{stats.totalBorrowers} peminjam</p>
             </CardContent>
           </Card>
           <Card>
@@ -26,8 +43,8 @@ export default function Dashboard() {
               <CardTitle className="text-xs text-muted-foreground font-normal">Dah Collect</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
-              <p className="text-2xl font-bold">RM 850</p>
-              <p className="text-xs text-muted-foreground">Bulan ini</p>
+              <p className="text-2xl font-bold">RM {stats.totalCollected.toFixed(2)}</p>
+              <p className="text-xs text-muted-foreground">{stats.activeDebts} hutang aktif</p>
             </CardContent>
           </Card>
         </div>
@@ -37,7 +54,7 @@ export default function Dashboard() {
             <CardTitle className="text-xs text-muted-foreground font-normal">Pending Approval</CardTitle>
           </CardHeader>
           <CardContent className="p-4 pt-0">
-            <p className="text-2xl font-bold">3</p>
+            <p className="text-2xl font-bold">{stats.pendingApprovals}</p>
             <p className="text-xs text-muted-foreground">Bukti bayaran menunggu review</p>
           </CardContent>
         </Card>
@@ -49,27 +66,6 @@ export default function Dashboard() {
             <Link to="/dashboard/borrowers/new"><Button variant="outline" className="w-full h-auto py-3 flex-col gap-1"><span className="text-lg">👤</span><span className="text-xs">Tambah Peminjam</span></Button></Link>
             <Link to="/dashboard/approvals"><Button variant="outline" className="w-full h-auto py-3 flex-col gap-1"><span className="text-lg">✅</span><span className="text-xs">Approvals</span></Button></Link>
             <Link to="/dashboard/settings"><Button variant="outline" className="w-full h-auto py-3 flex-col gap-1"><span className="text-lg">⚙️</span><span className="text-xs">Settings</span></Button></Link>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <h2 className="text-sm font-semibold">Aktiviti Terkini</h2>
-          <div className="space-y-2">
-            <div className="flex items-center gap-3 rounded-lg border p-3">
-              <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-xs">💰</div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">Ahmad bayar RM54.17</p>
-                <p className="text-xs text-muted-foreground">2 jam lepas</p>
-              </div>
-              <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">Pending</span>
-            </div>
-            <div className="flex items-center gap-3 rounded-lg border p-3">
-              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-xs">📝</div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">Hutang baru: Ali - RM600</p>
-                <p className="text-xs text-muted-foreground">Semalam</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>

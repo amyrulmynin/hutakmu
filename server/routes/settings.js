@@ -1,7 +1,17 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
 const { readJSON, writeJSON } = require('../db');
 
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, '../uploads'),
+  filename: (req, file, cb) => {
+    cb(null, `qr-${Date.now()}-${file.originalname}`);
+  }
+});
+const upload = multer({ storage });
 
 // Get settings for current admin
 router.get('/', (req, res) => {
@@ -15,10 +25,12 @@ router.post('/', (req, res) => {
   const settings = readJSON('settings.json');
   const idx = settings.findIndex(s => s.adminId === req.user.id);
 
+  const existing = idx >= 0 ? settings[idx] : { adminId: req.user.id, paymentInfo: {}, smsConfig: {} };
+
   const setting = {
     adminId: req.user.id,
-    paymentInfo: req.body.paymentInfo || {},
-    smsConfig: req.body.smsConfig || {},
+    paymentInfo: req.body.paymentInfo || existing.paymentInfo || {},
+    smsConfig: req.body.smsConfig || existing.smsConfig || {},
     updatedAt: new Date().toISOString()
   };
 
@@ -30,6 +42,34 @@ router.post('/', (req, res) => {
 
   writeJSON('settings.json', settings);
   res.json(setting);
+});
+
+// Upload QR code
+router.post('/upload-qr', upload.single('qrcode'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'File diperlukan' });
+  }
+
+  const qrUrl = `/uploads/${req.file.filename}`;
+
+  // Update settings with QR URL
+  const settings = readJSON('settings.json');
+  const idx = settings.findIndex(s => s.adminId === req.user.id);
+
+  if (idx >= 0) {
+    settings[idx].paymentInfo = settings[idx].paymentInfo || {};
+    settings[idx].paymentInfo.qrCodeUrl = qrUrl;
+  } else {
+    settings.push({
+      adminId: req.user.id,
+      paymentInfo: { qrCodeUrl: qrUrl },
+      smsConfig: {},
+      updatedAt: new Date().toISOString()
+    });
+  }
+
+  writeJSON('settings.json', settings);
+  res.json({ qrCodeUrl: qrUrl });
 });
 
 // Get dashboard stats

@@ -11,6 +11,7 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/server ./server
 COPY --from=build /app/package*.json ./
 RUN npm install --omit=dev
-RUN mkdir -p server/data server/uploads
+RUN mkdir -p /app/server/data /app/server/uploads
+VOLUME ["/app/server/data", "/app/server/uploads"]
 EXPOSE 3000
 CMD ["node", "server/index.js"]

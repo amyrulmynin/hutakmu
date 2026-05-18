@@ -47,9 +47,7 @@ export default function Home() {
             {/* Large card - spans 2 cols */}
             <div className="col-span-2 bg-white rounded-2xl p-6 border border-[#FAD4C0]/30 shadow-sm">
               <div className="w-12 h-12 rounded-xl bg-[#FAD4C0]/30 flex items-center justify-center mb-4">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#111827" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                </svg>
+                <span className="text-2xl">💰</span>
               </div>
               <h3 className="font-semibold text-[#111827] text-lg">Auto-Kira Bulanan</h3>
               <p className="text-sm text-[#111827]/60 mt-1">Set jumlah + fee + tempoh. System auto-generate jadual bayaran bulanan.</p>
@@ -58,9 +56,7 @@ export default function Home() {
             {/* Small card */}
             <div className="bg-white rounded-2xl p-5 border border-[#FAD4C0]/30 shadow-sm">
               <div className="w-10 h-10 rounded-xl bg-[#80A1C1]/20 flex items-center justify-center mb-3">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#80A1C1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
-                </svg>
+                <span className="text-xl">📤</span>
               </div>
               <h3 className="font-semibold text-[#111827] text-sm">Share Link</h3>
               <p className="text-xs text-[#111827]/60 mt-1">Hantar link bayar ke WhatsApp</p>
@@ -69,9 +65,7 @@ export default function Home() {
             {/* Small card */}
             <div className="bg-white rounded-2xl p-5 border border-[#FAD4C0]/30 shadow-sm">
               <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center mb-3">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
+                <span className="text-xl">✅</span>
               </div>
               <h3 className="font-semibold text-[#111827] text-sm">Approve Bukti</h3>
               <p className="text-xs text-[#111827]/60 mt-1">Review & approve bayaran</p>
@@ -81,9 +75,7 @@ export default function Home() {
             <div className="col-span-2 bg-[#111827] rounded-2xl p-6 shadow-sm">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/>
-                  </svg>
+                  <span className="text-2xl">📱</span>
                 </div>
                 <div>
                   <h3 className="font-semibold text-white text-base">SMS Reminder</h3>

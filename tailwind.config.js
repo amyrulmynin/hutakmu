@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'Noto Sans', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans SC', 'Noto Sans TC', 'Noto Sans Arabic', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Consolas', 'Menlo', 'Monaco', 'Courier New', 'Apple Color Emoji', 'Segoe UI Emoji', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
